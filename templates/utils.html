@@ -1,0 +1,31 @@
+{% macro term(t, withpicker=True, withclass=False) %}
+
+{% if t is not mapping %}
+
+{% for x in t %}
+{{ term(x, withpicker, withclass) }}
+{{ ", " if not loop.last }}
+{% endfor %}
+
+{% else %}
+<span class='term'>
+  <a class="{{'external' if t.external }}" href="{{t.url}}">{{t.label}}</a>
+  {% if withpicker %}
+
+	  {% if t.picked %}
+	  <a class='picker' style="display: inline" href="{{ t.realurl }}"><img
+              src="{{url_for('static', filename='star_active.png')}}"/></a>
+	  {% else %}
+	  <a class='picker hidden' style="display: none" href="{{ t.realurl }}"><img
+              src="{{url_for('static', filename='star_inactive.png')}}"/></a>
+	  {% endif %}
+   {% endif %}
+</span>
+
+{% if withclass and t.type%}
+<br/>
+<span class='termtype'>a {{term(t.type, withpicker=False)}}</span>
+{% endif %}
+
+{% endif %}
+{% endmacro %}

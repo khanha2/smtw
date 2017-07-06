@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% import 'utils.html' as utils %}
+
+{% block body %}
+<h1>Instances</h1>
+{% for t in types %}
+<h2>{{ t.label }}</h2>
+{% for r in resources[t.realurl] %}
+{{ utils.term(r) }}
+{% endfor %}
+{% endfor %}
+{% endblock %}
