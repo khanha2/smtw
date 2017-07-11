@@ -17,6 +17,8 @@ LABEL_PROPERTIES = [RDFS.label,
                     URIRef("http://www.w3.org/2006/vcard/ns#fn"),
                     URIRef("http://www.w3.org/2006/vcard/ns#org")]
 
+SECRET_KEY = 'WPjWg4OQHmPRWczygahhKfvadeD4mzaa'
+
 
 def setup():
     graph = Graph()
@@ -30,7 +32,7 @@ def setup():
     app.config["label_properties"] = LABEL_PROPERTIES
     app.config["labels"] = find_labels(graph, app.config["resources"], LABEL_PROPERTIES)
 
-    app.secret_key = 'WPjWg4OQHmPRWczygahhKfvadeD4mzaa'
+    app.secret_key = SECRET_KEY
 
 
 @app.before_request
@@ -136,4 +138,4 @@ def query_sparql():
 
 if __name__ == '__main__':
     setup()
-    app.run(debug=True)
+    app.run('0.0.0.0', debug=True)
