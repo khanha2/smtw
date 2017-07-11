@@ -1,6 +1,6 @@
 from rdflib import Graph, RDFS, URIRef, Literal
 
-from flask import Flask, render_template, url_for, redirect, request, session
+from flask import Flask, make_response, render_template, url_for, redirect, request, session
 
 from service import find_labels, find_resources, find_types, get_label
 from utils import *
@@ -112,6 +112,26 @@ def instances():
 @app.route('/page/<label>')
 def page(label, type=None):
     return render_template('page.html')
+
+
+@app.route('/query')
+def query():
+    return render_template('query.html')
+
+
+@app.route('/query-sparql', methods=['POST'])
+def query_sparql():
+    results = None
+    try:
+        q = request.form['query']
+        graph = app.config['graph']
+        results = graph.query(q).serialize(format='json')
+    except Exception as e:
+        print(e)
+    mime_type = resultformat_to_mime('json')
+    response = make_response(results)
+    response.headers["Content-Type"] = mime_type
+    return response
 
 
 if __name__ == '__main__':

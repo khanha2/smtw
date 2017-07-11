@@ -24,17 +24,22 @@ def mime_to_format(mimetype):
 
 
 def format_to_mime(format):
-    if format == 'ttl': format = 'turtle'
-    if format == 'json': format = 'json-ld'
+    if format == 'ttl':
+        format = 'turtle'
+    elif format == 'json':
+        format = 'json-ld'
     if format in FORMAT_MIMETYPE:
         return format, FORMAT_MIMETYPE[format]
     return "xml", RDFXML_MIME
 
 
 def resultformat_to_mime(format):
-    if format == 'xml': return XML_MIME
-    if format == 'json': return JSON_MIME
-    if format == 'html': return HTML_MIME
+    if format == 'xml':
+        return XML_MIME
+    elif format == 'json':
+        return JSON_MIME
+    elif format == 'html':
+        return HTML_MIME
     return "text/plain"
 
 

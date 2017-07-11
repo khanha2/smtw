@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}Query SPARQL{% endblock %}
+
+{% block body %}
+<h1>Query SPARQL</h1>
+<div class="form-group">
+    <textarea rows="10" cols="80" id="txt-query">
+        PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt; SELECT * WHERE { ?x dc:title ?label . }
+    </textarea>
+</div>
+<button class="btn btn-default" id="btn-query">Query</button>
+<h1>Query results</h1>
+<ul class="list-group" id="list-results"></ul>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+    function addResultItem(item) {
+        var resItem = '<li class="list-group-item"><table class="table table-bordered"><thead><th>Name</th><th>Type</th><th>Value</th></thead><tbody>';
+        var keys = Object.keys(item);
+        $(keys).each(function(index, key) {
+            var row = '<tr>';
+            row += '<td>' + key + '</td>';
+            var type = item[key].type;
+            row += '<td>' + item[key].type + '</td>';
+            if (type == 'uri') {
+                row += '<td><a href="' + item[key].value + '">' + item[key].value + '</a></td>';
+            } else {
+                row += '<td>' + item[key].value + '</td>';
+            }
+            row += '</tr>';
+            resItem += row;
+        });
+        resItem += '</tbody></table></li>';
+        $('#list-results').append(resItem);
+    }
+
+    $('#btn-query').on('click', function() {
+        $.ajax({
+            url: '{{url_for("query_sparql")}}',
+            type: 'POST',
+            data: {
+                query: $('#txt-query').val()
+            },
+            success: function(res) {
+                console.log(res);
+                $(res.results.bindings).each(function(index, element) {
+                    addResultItem(element);
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

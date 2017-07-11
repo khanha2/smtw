@@ -6,8 +6,10 @@
 <h1>Instances</h1>
 {% for t in types %}
 <h2>{{ t.label }}</h2>
-{% for r in resources[t.realurl] %}
-{{ utils.term(r) }}
-{% endfor %}
+<ul>
+    {% for r in resources[t.realurl] %}
+    <li>{{ utils.term(r) }}</li>
+    {% endfor %}
+</ul>
 {% endfor %}
 {% endblock %}
