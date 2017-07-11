@@ -1,3 +1,5 @@
+import os
+
 from rdflib import Graph, RDFS, URIRef, Literal
 
 from flask import Flask, make_response, render_template, url_for, redirect, request
@@ -22,7 +24,7 @@ SECRET_KEY = 'WPjWg4OQHmPRWczygahhKfvadeD4mzaa'
 
 def setup():
     graph = Graph()
-    graph.parse(GRAPH_PATH)
+    graph.parse(os.environ(GRAPH_PATH))
 
     app.config['graph'] = graph
     types, resource_types = find_types(graph)
