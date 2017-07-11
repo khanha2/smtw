@@ -1,3 +1,4 @@
+from flask_session import Session
 from rdflib import Graph, RDFS, URIRef, Literal
 
 from flask import Flask, make_response, render_template, url_for, redirect, request, session
@@ -6,6 +7,7 @@ from service import find_labels, find_resources, find_types, get_label
 from utils import *
 
 app = Flask(__name__)
+sess = Session()
 
 GRAPH_PATH = 'musicontology.rdf'
 
@@ -31,8 +33,8 @@ def setup():
     app.config["resources"] = find_resources(graph, app.config['types'])
     app.config["label_properties"] = LABEL_PROPERTIES
     app.config["labels"] = find_labels(graph, app.config["resources"], LABEL_PROPERTIES)
-
     app.secret_key = SECRET_KEY
+    app.config['SESSION_TYPE'] = 'filesystem'
 
 
 @app.before_request
@@ -138,4 +140,5 @@ def query_sparql():
 
 if __name__ == '__main__':
     setup()
+    sess.init_app(app)
     app.run('0.0.0.0', debug=True)
