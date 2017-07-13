@@ -1,6 +1,6 @@
 import os
 
-from rdflib import Graph, RDFS, URIRef, Literal
+from rdflib import Graph, RDFS, URIRef, Literal, util, RDF
 
 from flask import Flask, make_response, render_template, url_for, redirect, request
 
@@ -21,19 +21,17 @@ LABEL_PROPERTIES = [RDFS.label,
 
 SECRET_KEY = 'WPjWg4OQHmPRWczygahhKfvadeD4mzaa'
 
+graph = Graph()
+graph.parse(GRAPH_PATH)
 
-def setup():
-    graph = Graph()
-    graph.parse(os.environ(GRAPH_PATH))
-
-    app.config['graph'] = graph
-    types, resource_types = find_types(graph)
-    app.config['types'] = types
-    app.config['resource_types'] = resource_types
-    app.config["resources"] = find_resources(graph, app.config['types'])
-    app.config["label_properties"] = LABEL_PROPERTIES
-    app.config["labels"] = find_labels(graph, app.config["resources"], LABEL_PROPERTIES)
-    app.secret_key = SECRET_KEY
+app.config['graph'] = graph
+types, resource_types = find_types(graph)
+app.config['types'] = types
+app.config['resource_types'] = resource_types
+app.config["resources"] = find_resources(graph, app.config['types'])
+app.config["label_properties"] = LABEL_PROPERTIES
+app.config["labels"] = find_labels(graph, app.config["resources"], LABEL_PROPERTIES)
+app.secret_key = SECRET_KEY
 
 
 @app.route('/')
@@ -104,12 +102,6 @@ def instances():
     return render_template('instances.html', types=types, resources=resources)
 
 
-@app.route('/page/<type>/<label>')
-@app.route('/page/<label>')
-def page(label, type=None):
-    return render_template('page.html')
-
-
 @app.route('/query')
 def query():
     return render_template('query.html')
@@ -130,6 +122,16 @@ def query_sparql():
     return response
 
 
+@app.route('/classes')
+def classes():
+    graph = app.config['graph']
+    # page for all classes
+    roots = util.find_roots(graph, RDFS.subClassOf, set(app.config["types"]))
+    roots = sorted(roots, key=lambda x: get_label(app, RDFS.Class).lower())
+    _classes = [util.get_tree(graph, root, RDFS.subClassOf, resolve, sortkey=lambda x: x[0]['label'].lower())
+                for root in roots]
+    return render_template('classes.html', classes=_classes)
+
+
 if __name__ == '__main__':
-    setup()
     app.run('0.0.0.0', debug=True)

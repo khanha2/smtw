@@ -1,12 +1,27 @@
+{% macro tree(items) %}
+<ul>
+    {% for node,children in items recursive %}
+    {% if node is mapping %}
+    {% set node=[node] %}
+    {% endif %}
+    <li>
+        {{ term(node) }}
+        {% if children %}
+        <ul>
+            {{ loop(children) }}
+        </ul>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endmacro %}
+
 {% macro term(t, withpicker=True, withclass=False) %}
-
 {% if t is not mapping %}
-
 {% for x in t %}
 {{ term(x, withpicker, withclass) }}
 {{ ", " if not loop.last }}
 {% endfor %}
-
 {% else %}
 <span class='term'>
   <a class="{{'external' if t.external }}" href="{{t.url}}">{{t.label}}</a>
