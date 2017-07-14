@@ -1,6 +1,5 @@
-import mimeparse
+from flask import make_response
 
-# sparql results
 JSON_MIME = "application/sparql-results+json"
 XML_MIME = "application/sparql-results+xml"
 
@@ -23,13 +22,13 @@ def mime_to_format(mimetype):
     return "rdf"
 
 
-def format_to_mime(format):
-    if format == 'ttl':
-        format = 'turtle'
-    elif format == 'json':
-        format = 'json-ld'
-    if format in FORMAT_MIMETYPE:
-        return format, FORMAT_MIMETYPE[format]
+def format_to_mime(format_):
+    if format_ == 'ttl':
+        format_ = 'turtle'
+    elif format_ == 'json':
+        format_ = 'json-ld'
+    if format_ in FORMAT_MIMETYPE:
+        return format_, FORMAT_MIMETYPE[format_]
     return "xml", RDFXML_MIME
 
 
@@ -43,7 +42,18 @@ def resultformat_to_mime(format):
     return "text/plain"
 
 
-def best_match(cand, header):
-    if mimeparse and header:
-        return mimeparse.best_match(cand, header)
+def best_match(mines, header):
+    data = [x.lower() for x in header.split(',')]
+    lowered_mines = [x.lower() for x in mines]
+    for mine in lowered_mines:
+        for item in data:
+            if mine == item:
+                return mine
     return None
+
+
+def serialize(graph, format_):
+    format_, mime_type = format_to_mime(format_)
+    response = make_response(graph.serialize(format=format_))
+    response.headers["Content-Type"] = mime_type
+    return response

@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'layout.html' %}
 
-</body>
-</html>
+{% import 'utils.html' as utils %}
+
+{% block body %}
+<h1>Instances</h1>
+{% for t in types %}
+<h2>{{ t.label }}</h2>
+<ul>
+    {% for r in resources[t.realurl] %}
+    <li>{{ utils.term(r) }}</li>
+    {% endfor %}
+</ul>
+{% endfor %}
+{% endblock %}
