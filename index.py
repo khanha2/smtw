@@ -66,7 +66,7 @@ def resource(label, type_=None):
 def data(label, format_, type_=None):
     r = get_resource(label, type_)
     if isinstance(r, tuple):  # 404
-        return r
+        return render_template('not_found.html', message=r[0])
     graph_ = get_resource_graph(graph, r, label_properties)
     return serialize(graph_, format_)
 
@@ -79,7 +79,7 @@ def get_resource(label, type_):
         return reversed_resources[t][label]
     except Exception as e:
         print(e)
-        return "No such resource %s" % label, 404
+    return "No such resource %s" % label, 404
 
 
 @app.route('/page/<type_>/<rdf:label>')
@@ -87,7 +87,7 @@ def get_resource(label, type_):
 def page(label, type_=None):
     r = get_resource(label, type_)
     if isinstance(r, tuple):  # 404
-        return r
+        return render_template('not_found.html', message=r[0])
 
     special_props = (RDF.type, RDFS.comment, RDFS.label, RDFS.domain, RDFS.range, RDFS.subClassOf, RDFS.subPropertyOf)
 
