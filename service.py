@@ -238,7 +238,6 @@ def dot(inputgraph, format_):
         return "format '%s' not supported, try %s" % (format_, ", ".join(GRAPH_TYPES)), 415
 
     rankdir = request.args.get('rankdir', 'BT')
-    print(subprocess.PIPE)
     p = subprocess.Popen([DOT, "-Grankdir=%s" % rankdir, "-T%s" % format_], stdin=subprocess.PIPE,
                          stdout=subprocess.PIPE)
     uw = codecs.getwriter('utf8')(p.stdin)
