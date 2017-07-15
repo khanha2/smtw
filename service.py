@@ -35,15 +35,17 @@ def quote(l):
 
 
 def find_label(t, graph, label_props):
-    if isinstance(t, Literal): return str(t)
+    if isinstance(t, Literal):
+        return str(t)
     for l in label_props:
         try:
             return next(graph.objects(t, l))
         except StopIteration:
             pass
     try:
-        return urllib.unquote(local_name(t))
-    except:
+        return local_name(t)
+    except Exception as e:
+        print(e)
         return t
 
 
@@ -85,7 +87,7 @@ def get_label(app, r):
         return app.config['labels'][r]
     except:
         try:
-            l = urllib.unquote(local_name(r))
+            l = local_name(r)
         except:
             l = r
         app.config['labels'][r] = l

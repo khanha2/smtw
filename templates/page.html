@@ -4,12 +4,7 @@
 {% block title %}{{label}} @ {{config["dbname"]}}{% endblock %}
 
 {% block body %}
-
-<h1>
-
-    {{label}}
-    <span class='url'>{{resource}}</span>
-</h1>
+<h1> {{label}}</h1>
 is-a
 <span id="typelist">
 	{% for t in types %}
@@ -28,7 +23,7 @@ is-a
 {% block special %}{% endblock %}
 {% if outprops %}
 <h2>Properties:</h2>
-<table>
+<table class="table table-striped">
     <thead>
     <tr>
         <th>property</th>
@@ -43,14 +38,15 @@ is-a
         {% else %}
         <td>"{{v.label}}"
             {% if v.lang %} <i>({{v.lang}})</i> {% endif %}
-            {% endif %}
+        </td>
+        {% endif %}
     </tr>
     {% endfor %}
 </table>
 {% endif %}
 {% if inprops %}
 <h2>Incoming Properties:</h2>
-<table>
+<table class="table table-striped">
     <thead>
     <tr>
         <th>node</th>
@@ -59,45 +55,14 @@ is-a
     </thead>
     {% for v,p in inprops %}
     <tr class="{{ loop.cycle('odd', 'even') }}">
-        <td>{{utils.term(v, withclass=True)}}</td>
+        <td>{{ utils.term(v, withclass=True) }}</td>
         {% if p.url %}
-        <td>{{utils.term(p)}}</a></td>
+        <td>{{ utils.term(p) }}</a></td>
         {% else %}
-        <td>{{p.label}}
-            {% endif %}
+        <td>{{p.label}}</td>
+        {% endif %}
     </tr>
     {% endfor %}
 </table>
 {% endif %}
-
-<div id="footermenu">
-
-    Download as:
-    {% if type_ %}
-    <a href="{{url_for('data', type_=type_, label=urilabel, format_='nt') }}">ntriples</a> |
-    <a href="{{url_for('data', type_=type_, label=urilabel, format_='turtle') }}">turtle</a> |
-    <a href="{{url_for('data', type_=type_, label=urilabel, format_='xml') }}">rdf/xml</a> |
-    <a href="{{url_for('data', type_=type_, label=urilabel, format_='json') }}">json-ld</a>
-    Graph:
-    <a href="{{url_for('rdfgraph', type_=type_, label=urilabel, format_='png') }}">png</a> |
-    <a href="{{url_for('rdfgraph', type_=type_, label=urilabel, format_='pdf') }}">pdf</a> |
-    <a href="{{url_for('rdfgraph', type_=type_, label=urilabel, format_='svg') }}">svg</a> |
-    <a href="{{url_for('rdfgraph', type_=type_, label=urilabel, format_='dot') }}">dot</a>
-
-    {% else %}
-
-    <a href="{{url_for('data', label=urilabel, format_='nt') }}">ntriples</a> |
-    <a href="{{url_for('data', label=urilabel, format_='n3') }}">n3</a> |
-    <a href="{{url_for('data', label=urilabel, format_='xml') }}">rdf/xml</a> |
-    <a href="{{url_for('data', label=urilabel, format_='json') }}">json-ld</a>
-    |
-    Graph:
-    <a href="{{url_for('rdfgraph', label=urilabel, format_='png') }}">png</a> |
-    <a href="{{url_for('rdfgraph', label=urilabel, format_='pdf') }}">pdf</a> |
-    <a href="{{url_for('rdfgraph', label=urilabel, format_='svg') }}">svg</a> |
-    <a href="{{url_for('rdfgraph', label=urilabel, format_='dot') }}">dot</a>
-
-    {% endif %}
-</div>
-
 {% endblock %}

@@ -1,15 +1,37 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html' %} {% import 'utils.html' as utils %} {% block body %}
+<div id="instances-tree">
+    <ul>
+        {% for t in types %}
+        <li>
+            {{ t.label }} ({{ t.count }})
+            <ul>
+                {% for r in resources[t.realurl] %}
+                <li>{{ utils.term(r) }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
 
-{% import 'utils.html' as utils %}
-
-{% block body %}
-<h1>Instances</h1>
-{% for t in types %}
-<h2>{{ t.label }}</h2>
-<ul>
-    {% for r in resources[t.realurl] %}
-    <li>{{ utils.term(r) }}</li>
-    {% endfor %}
-</ul>
-{% endfor %}
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#instances-tree').jstree({
+        'core': {
+            'themes': {
+                'icons': false
+            }
+        }
+    }).bind('select_node.jstree', function(e, data) {
+        try {
+            var href = $(data.node.text).children('a').attr('href');
+            window.location.href = href;
+        } catch (err) {
+            return data.instance.toggle_node(data.node);
+        }
+    });
+});
+</script>
 {% endblock %}

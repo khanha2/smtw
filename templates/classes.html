@@ -2,12 +2,29 @@
 
 {% block body %}
 <h2>Class Hierarchy</h2>
-
-{% import 'utils.html' as utils %}
-{{ utils.tree(classes) }}
-
+<div id="instances-tree">
+    {% import 'utils.html' as utils %}
+    {{ utils.tree(classes) }}
+</div>
 {% endblock %}
 
 {% block scripts %}
-
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#instances-tree').jstree({
+        'core': {
+            'themes': {
+                'icons': false
+            }
+        }
+    }).bind('select_node.jstree', function(e, data) {
+        try {
+            var href = $(data.node.text).children('a').attr('href');
+            window.location.href = href;
+        } catch (err) {
+            return data.instance.toggle_node(data.node);
+        }
+    });
+});
+</script>
 {% endblock %}
